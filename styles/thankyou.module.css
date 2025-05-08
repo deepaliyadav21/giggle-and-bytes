@@ -1,0 +1,35 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 20px;
+}
+
+.card {
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.image {
+    display: block;
+    margin: 0 auto 20px auto; /* top: 0, right/left: auto, bottom: 20px */
+    max-width: 100px;
+}
+
+.message {
+    margin-bottom: 20px;
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.button {
+    text-transform: capitalize;
+}
