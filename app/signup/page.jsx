@@ -1,9 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
-import './signup.css'; // assuming this is your external CSS
+import { useRouter } from 'next/navigation'; // Import useRouter for navigation
+import toast, { Toaster } from 'react-hot-toast';
+import './signup.css';
 
 export default function SignUpPage() {
+  const router = useRouter(); // Initialize router for navigation
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -23,28 +26,41 @@ export default function SignUpPage() {
   };
 
   const handleSignUp = async () => {
+    if (form.password !== form.confirmPassword) {
+      toast.error("Passwords don't match.");
+      return;
+    }
+
+    if (!form.termsAccepted) {
+      toast.error('You must accept the terms and conditions.');
+      return;
+    }
+
     try {
       const res = await fetch('/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          f_name: form.firstName,
+          l_name: form.lastName,
           email: form.email,
           password: form.password,
         }),
       });
-  
+
       const data = await res.json();
-  
+
       if (!res.ok) {
-        alert(data.error || 'Signup failed');
+        toast.error(data.error || 'Signup failed');
         return;
       }
-  
-      alert('Login successful!');
-      console.log(data.user); // You can redirect or store user data here
+
+      toast.success('Registration successful! Redirecting to sign-in...');
+      setTimeout(() => router.push('/signin'), 2000); // Redirect after 2 seconds
+      console.log(data.user);
     } catch (err) {
       console.error('Signup error:', err);
-      alert('Something went wrong');
+      toast.error('Something went wrong');
     }
   };
 
@@ -59,6 +75,7 @@ export default function SignUpPage() {
 
   return (
     <div className="signup-container">
+      <Toaster />
       <div className="signup-box">
         <div className="signup-icon">
           <span role="img" aria-label="lock">🔒</span>
@@ -66,57 +83,16 @@ export default function SignUpPage() {
         <h2>Sign up</h2>
 
         <div className="name-fields">
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name *"
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name *"
-            onChange={handleChange}
-          />
+          <input type="text" name="firstName" placeholder="First Name *" onChange={handleChange} />
+          <input type="text" name="lastName" placeholder="Last Name *" onChange={handleChange} />
         </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address *"
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm-Password"
-          onChange={handleChange}
-        />
-
-        {/* <div className="checkbox-row">
-          <input
-            type="checkbox"
-            name="earnWithUs"
-            onChange={handleChange}
-          />
-          <label>
-            Do you want to join <span className="link-text">'Earn With Us'</span> Program?
-          </label>
-        </div> */}
+        <input type="email" name="email" placeholder="Email Address *" onChange={handleChange} />
+        <input type="password" name="password" placeholder="Password" onChange={handleChange} />
+        <input type="password" name="confirmPassword" placeholder="Confirm-Password" onChange={handleChange} />
 
         <div className="checkbox-row">
-          <input
-            type="checkbox"
-            name="termsAccepted"
-            onChange={handleChange}
-            id="termsAccepted"
-          />
+          <input type="checkbox" name="termsAccepted" onChange={handleChange} id="termsAccepted" />
           <label htmlFor="termsAccepted">
             I accept{' '}
             <Link href="/terms">
@@ -130,11 +106,7 @@ export default function SignUpPage() {
           <span>I'm not a robot</span>
         </div>
 
-        <button
-        className="next-button"
-        disabled={!isFormValid}
-        onClick={handleSignUp}
-        >
+        <button className="next-button" disabled={!isFormValid} onClick={handleSignUp}>
           Register
         </button>
 

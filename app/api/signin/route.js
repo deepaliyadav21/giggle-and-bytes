@@ -1,35 +1,43 @@
-import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
-
+import bcrypt from 'bcrypt';
+import { db } from '@/lib/db'; // Import your MySQL pool
 
 export async function POST(req) {
   try {
     const { email, password } = await req.json();
 
-    // Query user by email
-    const [rows] = await db.query('SELECT * FROM lets_users WHERE email = ?', [email]);
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
 
-    if (rows.length === 0) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    // Retrieve user from the database
+    const selectQuery = `SELECT id, email, password, full_name FROM lets_users WHERE email = ?`;
+    const [rows] = await db.execute(selectQuery, [email]);
+
+    if (!rows.length) {
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
     const user = rows[0];
 
-    // Compare plaintext password (or hash match in real app)
-    if (user.password !== password) {
-      return NextResponse.json({ error: 'Invalid password' }, { status: 401 });
+    // Compare password with the hashed version in the database
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
     return NextResponse.json({
-      message: 'Login successful',
+      message: 'User signed in successfully',
       user: {
-        uid: user.uid,
+        id: user.id,
         email: user.email,
         full_name: user.full_name,
       },
-    });
+    }, { status: 200 });
+
   } catch (error) {
-    console.error('Login error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Sign-in error:', error);
+    return NextResponse.json({ error: 'Sign-in failed' }, { status: 500 });
   }
 }
