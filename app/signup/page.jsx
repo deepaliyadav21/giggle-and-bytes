@@ -1,12 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Import useRouter for navigation
+import { useRouter } from 'next/navigation';
+import { FaLock } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
-import './signup.css';
 
 export default function SignUpPage() {
-  const router = useRouter(); // Initialize router for navigation
+  const router = useRouter();
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -17,6 +17,8 @@ export default function SignUpPage() {
     termsAccepted: false,
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
     setForm((prev) => ({
@@ -25,7 +27,9 @@ export default function SignUpPage() {
     }));
   };
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    
     if (form.password !== form.confirmPassword) {
       toast.error("Passwords don't match.");
       return;
@@ -36,6 +40,7 @@ export default function SignUpPage() {
       return;
     }
 
+    setLoading(true);
     try {
       const res = await fetch('/api/signup', {
         method: 'POST',
@@ -56,11 +61,12 @@ export default function SignUpPage() {
       }
 
       toast.success('Registration successful! Redirecting to sign-in...');
-      setTimeout(() => router.push('/signin'), 2000); // Redirect after 2 seconds
-      console.log(data.user);
+      setTimeout(() => router.push('/signin'), 2000);
     } catch (err) {
       console.error('Signup error:', err);
       toast.error('Something went wrong');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,45 +80,123 @@ export default function SignUpPage() {
     form.termsAccepted;
 
   return (
-    <div className="signup-container">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Toaster />
-      <div className="signup-box">
-        <div className="signup-icon">
-          <span role="img" aria-label="lock">🔒</span>
-        </div>
-        <h2>Sign up</h2>
+      <div className="max-w-md w-full space-y-8">
+        <div className="bg-white rounded-lg shadow-md p-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="mx-auto h-12 w-12 bg-primary rounded-full flex items-center justify-center">
+              <FaLock className="text-white text-xl" />
+            </div>
+            <h2 className="mt-4 text-3xl font-bold text-gray-900">Sign up</h2>
+          </div>
 
-        <div className="name-fields">
-          <input type="text" name="firstName" placeholder="First Name *" onChange={handleChange} />
-          <input type="text" name="lastName" placeholder="Last Name *" onChange={handleChange} />
-        </div>
+          {/* Form */}
+          <form onSubmit={handleSignUp} className="space-y-6">
+            {/* Name Fields */}
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                name="firstName"
+                placeholder="First Name *"
+                value={form.firstName}
+                onChange={handleChange}
+                className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                required
+              />
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Last Name *"
+                value={form.lastName}
+                onChange={handleChange}
+                className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                required
+              />
+            </div>
 
-        <input type="email" name="email" placeholder="Email Address *" onChange={handleChange} />
-        <input type="password" name="password" placeholder="Password" onChange={handleChange} />
-        <input type="password" name="confirmPassword" placeholder="Confirm-Password" onChange={handleChange} />
+            <div>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address *"
+                value={form.email}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                required
+              />
+            </div>
 
-        <div className="checkbox-row">
-          <input type="checkbox" name="termsAccepted" onChange={handleChange} id="termsAccepted" />
-          <label htmlFor="termsAccepted">
-            I accept{' '}
-            <Link href="/terms">
-              <span className="link-text">Terms and Conditions</span>
+            <div>
+              <input
+                type="password"
+                name="password"
+                placeholder="Password *"
+                value={form.password}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div>
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm Password *"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                required
+              />
+            </div>
+
+            {/* Terms Checkbox */}
+            <div className="flex items-start">
+              <input
+                type="checkbox"
+                name="termsAccepted"
+                checked={form.termsAccepted}
+                onChange={handleChange}
+                className="mt-1 mr-3"
+                required
+              />
+              <label className="text-sm text-gray-700">
+                I accept{' '}
+                <Link href="/terms" className="text-primary hover:underline">
+                  Terms and Conditions
+                </Link>
+              </label>
+            </div>
+
+            {/* reCAPTCHA Placeholder */}
+            <div className="flex items-center p-4 border border-gray-300 rounded-md bg-gray-50">
+              <input type="checkbox" className="mr-3" />
+              <span className="text-sm text-gray-700">I'm not a robot</span>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={!isFormValid || loading}
+              className={`w-full py-3 px-4 rounded-md font-semibold text-white transition-colors ${
+                isFormValid && !loading
+                  ? 'bg-primary hover:bg-blue-700'
+                  : 'bg-gray-400 cursor-not-allowed'
+              }`}
+            >
+              {loading ? 'Registering...' : 'Register'}
+            </button>
+          </form>
+
+          {/* Login Link */}
+          <p className="mt-6 text-center text-sm text-gray-600">
+            <Link href="/signin" className="text-primary hover:underline">
+              Already have an account?
             </Link>
-          </label>
+          </p>
         </div>
-
-        <div className="recaptcha-placeholder">
-          <input type="checkbox" />
-          <span>I'm not a robot</span>
-        </div>
-
-        <button className="next-button" disabled={!isFormValid} onClick={handleSignUp}>
-          Register
-        </button>
-
-        <p className="login-link">
-          <Link href="/signin">Already have an account?</Link>
-        </p>
       </div>
     </div>
   );

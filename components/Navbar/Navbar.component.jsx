@@ -3,340 +3,223 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-import styles from "@/styles/Header.module.css";
-import { Avatar, Typography, Button, Badge, Menu, MenuItem, Box, Fab, Zoom } from "@mui/material";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import HeadLink from "./HeadLink";
-
-
-import HomeIcon from '@mui/icons-material/Home';
-import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-import ImageIcon from "@mui/icons-material/Image";
-import CallIcon from "@mui/icons-material/Call";
-import CreateIcon from "@mui/icons-material/Create";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import { 
+  FaHome, 
+  FaBlog, 
+  FaImages, 
+  FaPhone, 
+  FaPen, 
+  FaLock, 
+  FaUserPlus,
+  FaUser,
+  FaSignOutAlt,
+  FaArrowUp
+} from 'react-icons/fa';
 
 export default function Navbar() {
-  const [language, setLanguage] = useState("hindi");
+  const [language, setLanguage] = useState("english");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [message, setMessage] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-
-const handleLogin = () => {
-    setAuth(true);
-  };
   useEffect(() => {
-    if (message) {
-      setTimeout(() => {
-        setMessage(false);
-      }, 4000);
-    }
-  }, [message]);
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <>
-      <div
-        className={styles.main}
-        style={{ color: "#fff" }}
-        id="back-to-top-anchor"
-      >
-        <span className={`${styles.logo} sm-h md-s`}>
-          <Link href="/">
-            <img
-              src="/logo/logo.webp"
-              alt="Letsdiskuss Logo"
-              width={110}
-              height={60}
-            />
-          </Link>
-        </span>
-
-        <div className="sm-h md-s">
-          <center>
-            <div
-              style={{
-                display: "flex",
-                color: "black",
-                justifyContent: "center",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  color: "black",
-                  justifyContent: "center",
-                }}
-              >
-                
-                <Button
-                  size="small"
-                  href={`/user/avinash}`}
-                  style={{
-                    backgroundColor: "#22c754",
-                    marginTop: "8px",
-                    marginBottom: "3px",
-                    color: "white",
-                    height: "25px",
-                    fontWeight: "700",
-                  }}
-                >
-                  Writer of the Month
-                </Button>
-                <Avatar
-                  style={{
-                    height: "20px",
-                    width: "20px",
-                    margin: "10px 6px",
-                    fontSize: "15px",
-                    backgroundColor: "#20565c",
-                  }}
-                >
-                  {"Avinash"}
-                </Avatar>
-                <a
-                  style={{ marginTop: "10px", color: "grey" }}
-                  href={`/user/$avinash}`}
-                >
-                  {"Avinash"}
-                </a>
+      {/* Top Header with Writer Awards */}
+      <div className="bg-gray-100 py-2 hidden md:block">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-center items-center space-x-8">
+            <div className="flex items-center space-x-2">
+              <button className="bg-secondary text-white px-3 py-1 rounded text-xs font-bold">
+                Writer of the Month
+              </button>
+              <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center text-white text-xs">
+                A
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  color: "black",
-                  justifyContent: "center",
-                  marginLeft: "20px",
-                }}
-              >
-                <Button
-                  size="small"
-                  href={`/user/$avinash}`}
-                  style={{
-                    backgroundColor: "#22c754",
-                    marginTop: "8px",
-                    marginBottom: "3px",
-                    color: "white",
-                    height: "25px",
-                    fontWeight: "700",
-                  }}
-                >
-                  Writer of the Week
-                </Button>
-                <Avatar
-                  style={{
-                    height: "20px",
-                    width: "20px",
-                    margin: "10px 6px",
-                    fontSize: "15px",
-                    backgroundColor: "#20565c",
-                  }}
-                >
-                  {"Avinash"}
-                </Avatar>
-                <a
-                  style={{ marginTop: "10px", color: "grey" }}
-                  href={`/user/$avinash`}
-                >
-                  {"Avinash"}
-                </a>
-              </div>
+              <Link href="/user/avinash" className="text-gray-600 text-sm hover:text-primary">
+                Avinash
+              </Link>
             </div>
-          </center>
+            <div className="flex items-center space-x-2">
+              <button className="bg-secondary text-white px-3 py-1 rounded text-xs font-bold">
+                Writer of the Week
+              </button>
+              <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center text-white text-xs">
+                A
+              </div>
+              <Link href="/user/avinash" className="text-gray-600 text-sm hover:text-primary">
+                Avinash
+              </Link>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <AppBar position="static" sx={{ backgroundColor: '#20565c' }}>
-          <Toolbar style={{ minHeight: 43 }}>
-            <span className="sm-s xs-s md-h xl-h pointer">
-              <Link href="/">
-                <img
+      {/* Main Navigation */}
+      <nav className="bg-primary text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <Link href="/" className="flex items-center">
+                <Image
                   src="/logo/logo.webp"
                   alt="Letsdiskuss Logo"
-                  width={70}
+                  width={80}
                   height={50}
+                  className="h-12 w-auto"
                 />
               </Link>
-            </span>
+            </div>
 
-            <div
-              className="sm-h md-s"
-              style={{ width: "100%", marginLeft: 150 }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <div>
-                  <HeadLink
-                    title="Home"
-                    icon={<HomeIcon />}
-                    link="/"
-                    tooltip="Home"
-                  />
-                  <HeadLink
-                    title="Blogs"
-                    icon={<ChatBubbleIcon />}
-                    link="/blog/"
-                    tooltip="Blogs"
-                  />
-                  <HeadLink
-                    title="Gallery"
-                    icon={<ImageIcon />}
-                    link="/gallery"
-                    tooltip="Gallery"
-                  />
-                  <HeadLink
-                    title="Contact Us"
-                    icon={<CallIcon />}
-                    link="/contact"
-                    tooltip="Contact Us"
-                  />
-                  <HeadLink
-                    title="Write For Us"
-                    icon={<CreateIcon />}
-                    link="/write-for-us"
-                    tooltip="Write For Us"
-                  />
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-1">
+              <NavLink href="/" icon={<FaHome />} text="Home" />
+              <NavLink href="/blog" icon={<FaBlog />} text="Blogs" />
+              <NavLink href="/gallery" icon={<FaImages />} text="Gallery" />
+              <NavLink href="/contact" icon={<FaPhone />} text="Contact Us" />
+              <NavLink href="/write-for-us" icon={<FaPen />} text="Write For Us" />
+            </div>
+
+            {/* Language & Auth Section */}
+            <div className="hidden md:flex items-center space-x-4">
+              {/* Language Switcher */}
+              <div className="flex items-center space-x-2">
+                <span className="text-sm">Language</span>
+                <Link
+                  href="https://hi.letsdiskuss.com"
+                  className="flex items-center px-3 py-1 rounded-full text-sm hover:bg-white hover:bg-opacity-10 transition-colors"
+                >
+                  <div className="w-2 h-2 border border-white rounded-full mr-2"></div>
+                  हिंदी
+                </Link>
+                <button className="flex items-center px-3 py-1 rounded-full text-sm bg-secondary font-bold">
+                  <div className="w-2 h-2 bg-white rounded-full mr-2"></div>
+                  English
+                </button>
+              </div>
+
+              {/* Auth Buttons */}
+              {!isLoggedIn ? (
+                <div className="flex items-center space-x-2">
+                  <Link
+                    href="/signin"
+                    className="flex items-center px-4 py-2 text-sm hover:bg-white hover:bg-opacity-10 rounded transition-colors"
+                  >
+                    <FaLock className="mr-2" />
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="flex items-center px-4 py-2 text-sm hover:bg-white hover:bg-opacity-10 rounded transition-colors"
+                  >
+                    <FaUserPlus className="mr-2" />
+                    Register
+                  </Link>
                 </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <button className="flex items-center px-4 py-2 text-sm hover:bg-white hover:bg-opacity-10 rounded transition-colors">
+                    <FaUser className="mr-2" />
+                    Profile
+                  </button>
+                  <button className="flex items-center px-4 py-2 text-sm hover:bg-white hover:bg-opacity-10 rounded transition-colors">
+                    <FaSignOutAlt className="mr-2" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
 
-                <div>
-                  <div style={{ display: "flex" }}>
-                    <Typography style={{ marginTop: 6, marginRight: 4 }}>
-                      Language
-                    </Typography>
-                    <a
-                      href={
-                        isLoggedIn
-                          ? `https://hi.letsdiskuss.com`
-                          : "https://hi.letsdiskuss.com"
-                      }
-                    >
-                      <Button
-                        startIcon={<RadioButtonUncheckedIcon />}
-                        style={{
-                          color: "#fff",
-                          textTransform: "capitalize",
-                          borderRadius: 20,
-                          paddingTop: 1,
-                          paddingBottom: 1,
-                          marginTop: 5,
-                          marginBottom: 3,
-                          fontWeight: "bold",
-                        }}
-                      >
-                        हिंदी
-                      </Button>
-                    </a>
-                    <Button
-                      startIcon={<RadioButtonCheckedIcon />}
-                      style={{
-                        color: "#fff",
-                        textTransform: "capitalize",
-                        borderRadius: 20,
-                        backgroundColor: "#22c754",
-                        paddingTop: 1,
-                        paddingBottom: 1,
-                        marginTop: 3,
-                        marginBottom: 3,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      English
-                    </Button>
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 rounded-md hover:bg-white hover:bg-opacity-10"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
 
-                    {isLoggedIn && (
-                      <>
-                        {currentUser?.prvlg_group === 1 && (
-                          <Link href="/letsadmin/">
-                            <MenuItem>Admin</MenuItem>
-                          </Link>
-                        )}
-                        <span
-                          onClick={handleMenuClick}
-                          style={{
-                            marginTop: 7,
-                            marginLeft: 15,
-                            color: "#fff",
-                          }}
-                        >
-                          {currentUser?.user_img ? (
-                            <img
-                              className={styles.menuImg}
-                              src={currentUser?.user_img.replace(
-                                /http:/g,
-                                "https:"
-                              )}
-                              width="30"
-                              height="30"
-                            />
-                          ) : (
-                            <AccountCircle />
-                          )}
-                          <Typography style={{ marginLeft: 8 }}>
-                            {currentUser?.full_name}
-                          </Typography>
-                        </span>
-                        <Menu
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={handleMenuClose}
-                        >
-                          <Link href={`/user/${currentUser?.username}`}>
-                            <MenuItem onClick={handleMenuClose}>
-                              {currentUser?.user_img ? (
-                                <img
-                                  style={{ borderRadius: 25 }}
-                                  src={currentUser?.user_img.replace(
-                                    /http:/g,
-                                    "https:"
-                                  )}
-                                  width="30"
-                                  height="30"
-                                />
-                              ) : (
-                                <AccountCircle />
-                              )}
-                              My Profile
-                            </MenuItem>
-                          </Link>
-                          <MenuItem onClick={logout}>
-                            <ExitToAppIcon /> Signout
-                          </MenuItem>
-                        </Menu>
-                      </>
-                    )}
-
-                    {isLoggedIn === false && (
-                      <span style={{ marginLeft: 15 }}>
-                        <Button
-                          startIcon={<LockOpenIcon />}
-                          style={{ color: "#fff", textTransform: "none" }}
-                          component="a"
-                          href="/signin"
-                        >
-                          Login
-                        </Button>
-                        <Button
-                          startIcon={<PersonAddIcon />}
-                          style={{ color: "#fff", textTransform: "none" }}
-                          onClick={handleLogin}
-                          component="a" // This makes the button clickable as a link
-                          href="/signup" // The target route
-                        >
-                          Register
-                        </Button>
-                      </span>
-                    )}
-                  </div>
+          {/* Mobile Navigation */}
+          {mobileMenuOpen && (
+            <div className="md:hidden py-4 border-t border-white border-opacity-20">
+              <div className="flex flex-col space-y-2">
+                <MobileNavLink href="/" icon={<FaHome />} text="Home" />
+                <MobileNavLink href="/blog" icon={<FaBlog />} text="Blogs" />
+                <MobileNavLink href="/gallery" icon={<FaImages />} text="Gallery" />
+                <MobileNavLink href="/contact" icon={<FaPhone />} text="Contact Us" />
+                <MobileNavLink href="/write-for-us" icon={<FaPen />} text="Write For Us" />
+                
+                <div className="border-t border-white border-opacity-20 pt-2 mt-2">
+                  {!isLoggedIn ? (
+                    <>
+                      <MobileNavLink href="/signin" icon={<FaLock />} text="Login" />
+                      <MobileNavLink href="/signup" icon={<FaUserPlus />} text="Register" />
+                    </>
+                  ) : (
+                    <>
+                      <MobileNavLink href="/profile" icon={<FaUser />} text="Profile" />
+                      <MobileNavLink href="/logout" icon={<FaSignOutAlt />} text="Logout" />
+                    </>
+                  )}
                 </div>
               </div>
             </div>
-          </Toolbar>
-        </AppBar>
-      </div>
+          )}
+        </div>
+      </nav>
+
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-opacity-90 transition-all duration-300 z-50"
+        >
+          <FaArrowUp />
+        </button>
+      )}
     </>
+  );
+}
+
+// Desktop Navigation Link Component
+function NavLink({ href, icon, text }) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center px-4 py-2 text-sm font-medium hover:bg-white hover:bg-opacity-10 rounded transition-colors"
+    >
+      <span className="mr-2">{icon}</span>
+      {text}
+    </Link>
+  );
+}
+
+// Mobile Navigation Link Component
+function MobileNavLink({ href, icon, text }) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center px-4 py-2 text-sm font-medium hover:bg-white hover:bg-opacity-10 rounded transition-colors"
+    >
+      <span className="mr-3">{icon}</span>
+      {text}
+    </Link>
   );
 }
